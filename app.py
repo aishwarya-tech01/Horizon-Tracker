@@ -10,9 +10,9 @@ def get_db():
 
 def init_db():
     conn = get_db()
-    # Added 'date_applied' to track time for your 7-day alerts
+    # Stores salary as integer for calculations
     conn.execute('''CREATE TABLE IF NOT EXISTS applications 
-                    (id INTEGER PRIMARY KEY, company TEXT, title TEXT, status TEXT, date_applied DATE)''')
+                    (id INTEGER PRIMARY KEY, company TEXT, title TEXT, status TEXT, date_applied DATE, salary INTEGER)''')
     conn.commit()
     conn.close()
 
@@ -22,25 +22,27 @@ init_db()
 def index():
     conn = get_db()
     jobs = conn.execute('SELECT * FROM applications').fetchall()
+    # Logic to sum up only 'Offered' salaries
+    total_offered = sum(job['salary'] for job in jobs if job['status'] == 'Offered' and job['salary'])
     conn.close()
-    return render_template('index.html', jobs=jobs)
+    return render_template('index.html', jobs=jobs, total_offered=total_offered)
 
 @app.route('/add', methods=['POST'])
 def add():
     company = request.form['company']
     title = request.form['title']
+    salary = request.form.get('salary', 0)
     conn = get_db()
-    # Using CURRENT_DATE to track when you added it
-    conn.execute('INSERT INTO applications (company, title, status, date_applied) VALUES (?, ?, ?, CURRENT_DATE)', 
-                 (company, title, 'Applied'))
+    conn.execute('INSERT INTO applications (company, title, status, date_applied, salary) VALUES (?, ?, ?, CURRENT_DATE, ?)', 
+                 (company, title, 'Applied', salary))
     conn.commit()
     conn.close()
     return redirect('/')
 
-@app.route('/update/<int:id>')
-def update(id):
+@app.route('/update/<int:id>/<string:status>')
+def update(id, status):
     conn = get_db()
-    conn.execute('UPDATE applications SET status = "Interviewing" WHERE id = ?', (id,))
+    conn.execute('UPDATE applications SET status = ? WHERE id = ?', (status, id))
     conn.commit()
     conn.close()
     return redirect('/')
