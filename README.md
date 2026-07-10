@@ -4,10 +4,10 @@
 Horizon Tracker is a clean, automated web application designed for job seekers to monitor their application pipelines. It helps organize outreach, track submission dates, and ensure no opportunity is missed.
 
 ## 🛠️ Tech Stack
-* **Frontend:** HTML & CSS
-* **Backend:** Python (Flask)
-* **Database:** SQLite
-* **Editor:** Visual Studio Code
+* **Frontend:** HTML & CSS.
+* **Backend:** Python (Flask).
+* **Database:** SQLite.
+* **Editor:** Visual Studio Code.
 
 ## 🚀 Key Features
 * **Job Dashboard:** View all your applications in one place.
